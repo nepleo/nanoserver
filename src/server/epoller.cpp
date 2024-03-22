@@ -36,12 +36,10 @@ bool Epoller::ModFd(int fd, uint32_t events_type) {
 }
 
 int Epoller::Wait(int timeout_ms) {
-  int events_count =
-      epoll_wait(m_epollfd, m_events.data(), (int)m_events.size(), timeout_ms);
+  int events_count = epoll_wait(m_epollfd, m_events.data(), (int)m_events.size(), timeout_ms);
   if (events_count == -1 && errno == ENOMEM) {
     m_events.resize(m_events.size() * 2);
-    events_count = epoll_wait(m_epollfd, m_events.data(), (int)m_events.size(),
-                              timeout_ms);
+    events_count = epoll_wait(m_epollfd, m_events.data(), (int)m_events.size(), timeout_ms);
   }
   return events_count;
 }

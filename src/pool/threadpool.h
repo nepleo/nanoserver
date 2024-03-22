@@ -11,7 +11,7 @@
 #include <vector>
 
 class ThreadPool {
-public:
+ public:
   explicit ThreadPool(size_t num);
   ThreadPool(const ThreadPool &) = delete;
   ThreadPool &operator=(const ThreadPool &) = delete;
@@ -21,7 +21,7 @@ public:
   template <typename F, typename... Args>
   decltype(auto) AddWorkFunc(F &&f, Args &&...args);
 
-private:
+ private:
   std::queue<std::function<void()>> m_tasksque;
   std::vector<std::thread> m_worker_threads;
   std::mutex m_tasksque_mutex;
@@ -36,9 +36,7 @@ inline ThreadPool::ThreadPool(size_t num) {
         std::function<void()> task;
         {
           std::unique_lock<std::mutex> lock(this->m_tasksque_mutex);
-          this->m_condition.wait(lock, [this] {
-            return (this->m_stopflag || !this->m_tasksque.empty());
-          });
+          this->m_condition.wait(lock, [this] { return (this->m_stopflag || !this->m_tasksque.empty()); });
           if (this->m_stopflag && this->m_tasksque.empty()) {
             return;
           }
@@ -68,19 +66,16 @@ decltype(auto) ThreadPool::AddWorkFunc(F &&f, Args &&...args) {
 #if _MSVC_LANG <= 201402L
   using return_type = std::result_of_t<F(Args...)>;
 #else
-  using return_type =
-      std::invoke_result_t<std::decay_t<F>, std::decay_t<Args>...>;
+  using return_type = std::invoke_result_t<std::decay_t<F>, std::decay_t<Args>...>;
 #endif
 #elif defined(__linux__) || defined(__unix__) || defined(__APPLE__)
 #if __cplusplus <= 201402L
   using return_type = std::result_of_t<F(Args...)>;
 #else
-  using return_type =
-      std::invoke_result_t<std::decay_t<F>, std::decay_t<Args>...>;
+  using return_type = std::invoke_result_t<std::decay_t<F>, std::decay_t<Args>...>;
 #endif
 #endif
-  auto task = std::make_shared<std::packaged_task<return_type()>>(
-      [Func = std::forward<F>(f)] { return Func(); });
+  auto task = std::make_shared<std::packaged_task<return_type()>>([Func = std::forward<F>(f)] { return Func(); });
 
   std::future<return_type> res = task->get_future();
   {
