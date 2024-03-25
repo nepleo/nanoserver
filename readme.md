@@ -1,8 +1,8 @@
-# Nano General Server
+# Nano Server
 
 ## Overview
 
-General Server is a small-scale I/O multiplexing program framework written using epoll and following the reactor pattern. It is designed to be adaptable for various communication protocols such as HTTP and socket connections.
+Nano Server is a small-scale I/O multiplexing program framework written using epoll and following the reactor pattern. It is designed to be adaptable for various communication protocols such as HTTP and socket connections.
 
 ## Features
 
