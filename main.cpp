@@ -1,5 +1,6 @@
-#include <iostream>
+#include "src/server.h"
 
 int main() {
-	return 0;
+  Server s(30010, 8, 3);
+  s.Start();
 }
